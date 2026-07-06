@@ -31,7 +31,7 @@ export const ProductCard = ({ product }) => {
     <div className="product-card" onClick={() => setSelectedProduct(product)}>
       <div className="product-image-container">
         <span className="product-category-tag">{product.category}</span>
-        <ProductImage name={product.image} size="160px" />
+        <ProductImage name={product.image} category={product.category} size="160px" />
       </div>
 
       <div className="product-info">

@@ -1,38 +1,104 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export const ProductImage = ({ name, size = '100%' }) => {
+// ── Per-product image map (image key → URL) ──────────────────────────────────
+const IMAGE_MAP = {
+  // Baby Toys
+  'rocking-horse':   '/products/baby-toys.png',
+  'baby-walker':     '/products/baby-toys.png',
+  'baby-rattle':     '/products/baby-toys.png',
+  'baby-mobile':     '/products/baby-toys.png',
+
+  // Cars
+  'race-car':        '/products/toy-car.png',
+  'retro-roadster':  '/products/toy-car.png',
+  'monster-truck':   '/products/toy-car.png',
+  'fire-truck':      '/products/toy-car.png',
+
+  // Bikes
+  'balance-bike':    '/products/toy-bike.png',
+  'tricycle':        '/products/toy-bike.png',
+  'scooter-toy':     '/products/toy-bike.png',
+  'mini-bicycle':    '/products/toy-bike.png',
+
+  // Soft Toys
+  'plush-bear':      '/products/soft-toys.png',
+  'plush-bunny':     '/products/soft-toys.png',
+  'plush-elephant':  '/products/soft-toys.png',
+  'plush-fox':       '/products/soft-toys.png',
+
+  // Brain Game Toys
+  '3d-puzzle':       '/products/brain-game.png',
+  'tangram-puzzle':  '/products/brain-game.png',
+  'sudoku-blocks':   '/products/brain-game.png',
+  'abacus-toy':      '/products/brain-game.png',
+
+  // Cards
+  'trivia-cards':    '/products/toy-cards.png',
+  'memory-cards':    '/products/toy-cards.png',
+  'alphabet-cards':  '/products/toy-cards.png',
+  'animal-cards':    '/products/toy-cards.png',
+
+  // Fancy Purses — curated Unsplash shots
+  'velvet-purse':
+    'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=400&h=400&fit=crop&auto=format',
+  'rattan-purse':
+    'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=400&fit=crop&auto=format',
+  'glitter-purse':
+    'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400&h=400&fit=crop&auto=format',
+  'butterfly-bag':
+    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&h=400&fit=crop&auto=format',
+
+  // Key Chains — curated Unsplash shots
+  'keychain-unicorn':
+    'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop&auto=format',
+  'keychain-animals':
+    'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=400&fit=crop&auto=format',
+  'keychain-star':
+    'https://images.unsplash.com/photo-1535268244832-6e7c9a40b5d8?w=400&h=400&fit=crop&auto=format',
+  'keychain-rainbow':
+    'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=400&fit=crop&auto=format',
+};
+
+// ── Category-level fallbacks ──────────────────────────────────────────────────
+const CATEGORY_FALLBACK = {
+  'baby toys':       '/products/baby-toys.png',
+  'cars':            '/products/toy-car.png',
+  'bikes':           '/products/toy-bike.png',
+  'soft toys':       '/products/soft-toys.png',
+  'brain game toys': '/products/brain-game.png',
+  'cards':           '/products/toy-cards.png',
+  'fancy purses':
+    'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=400&h=400&fit=crop&auto=format',
+  'key chains':
+    'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop&auto=format',
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+export const ProductImage = ({ name, category, size = '100%' }) => {
+  const [errored, setErrored] = useState(false);
+
   const style = {
     width: size,
     height: size,
     maxWidth: '300px',
     maxHeight: '300px',
-    objectFit: 'contain',
-    borderRadius: '8px'
+    objectFit: 'cover',
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
   };
 
-  // Map product names/categories to sample images
-  const getImageUrl = () => {
-    const lowerName = (name || '').toLowerCase();
-    if (lowerName.includes('baby') || lowerName.includes('rattle') || lowerName.includes('walker') || lowerName.includes('teether')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=colorful%20baby%20toys%20rattles%20teethers%20soft%20pastel%20colors%20safe%20for%20baby&image_size=square';
-    } else if (lowerName.includes('car') || lowerName.includes('truck')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=bright%20colorful%20kids%20toy%20cars%20trucks%20racing%20red%20blue%20green%20yellow&image_size=square';
-    } else if (lowerName.includes('bike') || lowerName.includes('tricycle')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=kids%20balance%20bike%20tricycle%20colorful%20toys&image_size=square';
-    } else if (lowerName.includes('plush') || lowerName.includes('soft') || lowerName.includes('stuffed')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=cute%20soft%20plush%20stuffed%20animal%20teddy%20bunny%20colorful&image_size=square';
-    } else if (lowerName.includes('puzzle') || lowerName.includes('brain')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=kids%20educational%203d%20puzzle%20brain%20games%20wooden%20toys&image_size=square';
-    } else if (lowerName.includes('card') || lowerName.includes('trivia')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=colorful%20kids%20memory%20playing%20trivia%20cards&image_size=square';
-    } else if (lowerName.includes('purse') || lowerName.includes('fancy')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=fancy%20kids%20purse%20handbag%20colorful%20sparkly%20for%20girls%20toy&image_size=square';
-    } else if (lowerName.includes('keychain') || lowerName.includes('key')) {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=cute%20colorful%20keychains%20kids%20toy%20keychain&image_size=square';
-    } else {
-      return 'https://coresg-normal.trae.ai/api/v1/text-to-image?prompt=premium%20kids%20colorful%20toy%20shop%20golden%20toys&image_size=square';
-    }
-  };
+  const key  = (name || '').toLowerCase().trim();
+  const cat  = (category || '').toLowerCase().trim();
 
-  return <img src={getImageUrl()} alt={name} style={style} />;
+  const primarySrc  = IMAGE_MAP[key] || CATEGORY_FALLBACK[cat] || '/products/baby-toys.png';
+  const fallbackSrc = CATEGORY_FALLBACK[cat] || '/products/baby-toys.png';
+
+  return (
+    <img
+      src={errored ? fallbackSrc : primarySrc}
+      alt={name}
+      style={style}
+      onError={() => setErrored(true)}
+    />
+  );
 };
