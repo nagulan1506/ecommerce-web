@@ -289,10 +289,16 @@ const dbHelper = {
 
   async connect() {
     try {
-      const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/wonderland-toys';
-      console.log(`Attempting to connect to MongoDB at: ${uri}...`);
+      const uri = process.env.MONGODB_URI || process.env.MONGO_URI || null;
+      if (!uri) {
+        console.warn('No MONGODB_URI provided. Falling back to local JSON DB.');
+        this.isLocal = true;
+        initLocalDb();
+        return;
+      }
+      console.log('Attempting to connect to MongoDB...');
       await mongoose.connect(uri, {
-        serverSelectionTimeoutMS: 2000 // Timeout fast
+        serverSelectionTimeoutMS: 10000 // 10 seconds for Render cold start
       });
       console.log('MongoDB Connected Successfully!');
       this.isLocal = false;
