@@ -1,0 +1,5 @@
+package com.bommaikadai.app;
+
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {}
